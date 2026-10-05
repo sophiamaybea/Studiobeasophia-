@@ -12,3 +12,5 @@ Embed mode:
 `/?embed=1&src=https://example.com/song.mp3&title=Track%20Name`
 
 Remote audio must permit CORS.
+
+Deployment source: Git-linked main branch.
