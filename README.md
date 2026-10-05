@@ -1,0 +1,1 @@
+# Bea Sophia — Found Matter\n\nInteractive photocopied-zine collage asset reconstructed from a supplied visual reference. Drag, disturb, restore and switch to reading mode. Pure HTML/CSS/JS, responsive, touch-friendly and deployable as a zero-runtime static Vercel site.\n
