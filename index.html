@@ -1,0 +1,232 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#f2efde">
+<title>Found Matter — Bea Sophia</title>
+<style>
+:root{--paper:#f2efde;--ink:#090908;--quiet:#6d695e;--poster:638/534}
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%;background:var(--paper);color:var(--ink)}
+body{min-height:100svh;overflow:hidden;font-family:Arial,Helvetica,sans-serif;-webkit-font-smoothing:antialiased;background:radial-gradient(circle at 18% 15%,rgba(255,255,255,.55),transparent 34%),radial-gradient(circle at 83% 88%,rgba(0,0,0,.04),transparent 35%),var(--paper)}
+body:before{content:"";position:fixed;inset:0;pointer-events:none;z-index:100;opacity:.38;mix-blend-mode:multiply;background-image:repeating-radial-gradient(circle at 0 0,rgba(0,0,0,.055) 0 .32px,transparent .48px 2.8px),linear-gradient(90deg,transparent 49.7%,rgba(0,0,0,.02) 50%,transparent 50.3%);background-size:4px 4px,9px 100%}
+button{font:inherit;color:inherit}
+.shell{position:fixed;inset:0;padding:clamp(52px,6vw,84px) clamp(14px,4vw,54px) clamp(46px,5vw,70px);display:grid;place-items:center}
+.poster{position:relative;width:min(92vw,calc(80svh * 638 / 534),1080px);aspect-ratio:var(--poster);background:#f8f5e7;box-shadow:0 0 0 1px rgba(0,0,0,.13),0 18px 42px rgba(31,25,12,.13);overflow:visible;isolation:isolate;touch-action:none}
+.poster:after{content:"";position:absolute;inset:0;pointer-events:none;z-index:60;background:linear-gradient(102deg,transparent 0 24%,rgba(0,0,0,.025) 24.2%,transparent 24.5% 69%,rgba(255,255,255,.18) 69.2%,transparent 69.6%),repeating-linear-gradient(0deg,rgba(0,0,0,.016) 0 1px,transparent 1px 4px);mix-blend-mode:multiply}
+.scrap{position:absolute;transform:translate3d(var(--x,0),var(--y,0),0) rotate(var(--r,0deg)) scale(var(--s,1));transform-origin:var(--ox,50%) var(--oy,50%);transition:transform .58s cubic-bezier(.2,.8,.2,1),filter .18s ease;will-change:transform;cursor:grab;user-select:none;touch-action:none}
+.scrap:hover{filter:contrast(1.06)}
+.scrap.dragging{transition:none;cursor:grabbing;filter:drop-shadow(0 10px 8px rgba(0,0,0,.17));z-index:90!important}
+.photo{background:#111;overflow:hidden}
+.photo:before{content:"";position:absolute;inset:-10%;background:radial-gradient(circle at 68% 40%,#eee 0 5%,#777 5.6% 8%,#181818 8.5% 11%,transparent 11.7%),radial-gradient(ellipse at 53% 62%,#d9d7cb 0 12%,#4d4d47 12.6% 21%,#111 21.5% 35%,transparent 35.5%),linear-gradient(128deg,transparent 0 26%,#e9e6d7 26.4% 29%,#111 29.5% 100%);filter:grayscale(1) contrast(1.55)}
+.photo:after{content:"";position:absolute;inset:0;background:repeating-radial-gradient(circle at 0 0,rgba(255,255,255,.38) 0 .5px,transparent .6px 2.3px);mix-blend-mode:screen;opacity:.35}
+.photo.a{left:4%;top:7%;width:30%;height:38%;clip-path:polygon(6% 1%,97% 0,90% 22%,99% 42%,82% 51%,100% 70%,91% 99%,3% 95%,13% 71%,2% 52%,10% 31%)}
+.photo.b{left:4%;top:62%;width:29%;height:31%;clip-path:polygon(0 7%,96% 0,100% 84%,78% 100%,4% 94%)}
+.photo.b:before{background:radial-gradient(circle at 52% 23%,#d8d8cf 0 9%,#151515 9.4% 20%,transparent 20.5%),radial-gradient(ellipse at 49% 65%,#e6e4d8 0 16%,#222 17% 27%,#777 28% 34%,transparent 35%),linear-gradient(90deg,#151515,#777 45%,#151515)}
+.photo.c{left:22%;top:25%;width:25%;height:28%;clip-path:polygon(3% 5%,100% 0,94% 96%,0 91%)}
+.photo.c:before{background:linear-gradient(35deg,#111 0 18%,#d8d5c7 18.5% 27%,#333 27.5% 40%,#eee 40.5% 53%,#111 53.5% 100%)}
+
+.help{left:22.5%;top:17%;font:900 clamp(58px,10.8vw,146px)/.68 Arial Black,Arial,sans-serif;letter-spacing:-.13em;transform-origin:50% 50%;writing-mode:vertical-rl;rotate:180deg;color:#070707;mix-blend-mode:multiply;z-index:18}
+.so{left:52%;top:43%;font:900 clamp(36px,6.3vw,84px)/.8 Arial Black,Arial,sans-serif;letter-spacing:-.09em;z-index:19}
+.read-on{right:19%;top:1.7%;font:900 clamp(22px,4.2vw,61px)/.72 Arial Black,Arial,sans-serif;letter-spacing:-.055em;z-index:40}
+.read-on small{display:block;font:700 clamp(7px,1vw,12px)/1 Arial,sans-serif;letter-spacing:.12em;transform:rotate(-90deg) translate(-42%,-165%);transform-origin:0 0;position:absolute;white-space:nowrap}
+
+.figure{right:5.3%;top:4.6%;width:31%;height:89%;z-index:10}
+.figure svg{display:block;width:100%;height:100%;overflow:visible}
+.figure .body{fill:#0c0c0b}
+.figure .legs{fill:#151514}
+.figure .noise{opacity:.28;mix-blend-mode:screen}
+.article{right:4.7%;top:11.3%;width:28.8%;height:45.5%;padding:1.3% 1.5%;z-index:30;background:rgba(248,245,231,.88);clip-path:polygon(5% 2%,94% 0,100% 96%,2% 100%,0 17%);font:600 clamp(8px,1.35vw,17px)/1.02 "Courier New",monospace;letter-spacing:-.06em;text-align:left;overflow:hidden}
+.article b{font:900 1.03em/1 Arial Black,Arial,sans-serif}
+.article .come{font-size:1.35em;letter-spacing:-.12em}
+.music{right:7.8%;top:53.5%;width:22%;z-index:42;font:italic 700 clamp(10px,1.6vw,21px)/1.06 "Courier New",monospace;transform:rotate(-4deg);text-align:center}
+.music span{font-size:1.18em}
+
+.informal{left:4.1%;top:49%;font:700 clamp(8px,1.1vw,14px)/1 Arial,sans-serif;writing-mode:vertical-rl;rotate:180deg;letter-spacing:.01em;z-index:30}
+.mature{left:20.8%;top:37%;padding:.5% .8%;background:#111;color:#f5f2e2;font:700 clamp(7px,1vw,13px)/1 Arial,sans-serif;z-index:33}
+.discount{left:35.5%;top:45.5%;width:21%;font:600 clamp(6px,.95vw,12px)/1.15 "Courier New",monospace;transform:rotate(90deg);transform-origin:0 0;z-index:34}
+.quiet{left:12%;top:76%;font:italic 500 clamp(7px,1.15vw,14px)/1 Georgia,serif;transform:rotate(-2deg);z-index:34}
+.vertical-note{left:57%;top:8%;font:700 clamp(6px,.8vw,11px)/1 Arial,sans-serif;writing-mode:vertical-rl;rotate:180deg;letter-spacing:.04em;z-index:45}
+
+.doodle{position:absolute;z-index:35;fill:none;stroke:#0b0b0a;stroke-width:2.3;stroke-linecap:round;stroke-linejoin:round}
+.doodle.fish{left:31%;top:4%;width:28%;height:19%;transform:rotate(5deg)}
+.doodle.arm{left:5%;top:49%;width:31%;height:20%;transform:rotate(3deg)}
+.doodle.face{left:3%;top:57%;width:19%;height:26%;transform:rotate(-4deg)}
+.doodle.dress{left:19%;top:54%;width:21%;height:24%;transform:rotate(-2deg)}
+.tiny-dancer{left:27%;top:84%;font-size:clamp(13px,2.2vw,28px);z-index:44;transform:rotate(8deg)}
+
+.ui{position:fixed;z-index:120;left:max(12px,2.2vw);right:max(12px,2.2vw);top:max(11px,1.8vw);display:flex;align-items:flex-start;justify-content:space-between;pointer-events:none}
+.brand{pointer-events:auto;font:700 9px/1 Arial,sans-serif;letter-spacing:.18em;text-transform:uppercase;display:flex;gap:8px;align-items:center}
+.brand i{font:italic 400 11px/1 Georgia,serif;letter-spacing:.02em;text-transform:none}
+.controls{display:flex;gap:6px;pointer-events:auto}
+.control{border:1px solid rgba(0,0,0,.48);background:rgba(242,239,222,.8);backdrop-filter:blur(8px);padding:8px 9px 7px;font:700 9px/1 Arial,sans-serif;letter-spacing:.14em;text-transform:uppercase;cursor:pointer}
+.control:hover,.control:focus-visible{background:#0a0a09;color:#f4f1df;outline:none}
+.note{position:fixed;left:max(12px,2.2vw);bottom:max(12px,1.8vw);z-index:115;font:400 9px/1.45 ui-monospace,SFMono-Regular,Menlo,monospace;opacity:.6}
+.folio{position:fixed;right:max(12px,2.2vw);bottom:max(12px,1.8vw);z-index:115;font:italic 11px/1 Georgia,serif;opacity:.65;transform:rotate(-2deg)}
+.reader{position:fixed;inset:0;z-index:140;background:rgba(242,239,222,.98);display:grid;grid-template-columns:minmax(0,1.15fr) minmax(280px,.85fr);gap:clamp(28px,6vw,86px);padding:clamp(52px,7vw,98px);opacity:0;pointer-events:none;transition:opacity .22s ease;overflow:auto}
+.reader.open{opacity:1;pointer-events:auto}
+.reader-art{min-height:58vh;position:relative;border:1px solid rgba(0,0,0,.2);background:#f7f4e6;overflow:hidden;display:grid;place-items:center}
+.reader-art strong{font:900 clamp(68px,12vw,180px)/.68 Arial Black,Arial,sans-serif;letter-spacing:-.12em;transform:rotate(-7deg);text-align:center}
+.reader-copy{align-self:center;max-width:510px}
+.reader-k{font:700 10px/1 Arial,sans-serif;letter-spacing:.2em;text-transform:uppercase;margin:0 0 22px}
+.reader h1{font:900 clamp(42px,7vw,98px)/.8 Arial Black,Arial,sans-serif;letter-spacing:-.08em;text-transform:uppercase;margin:0 0 28px}
+.reader p{font:400 clamp(15px,1.35vw,19px)/1.48 Georgia,serif;margin:0 0 16px;max-width:42ch}
+.reader .meta{font:400 10px/1.5 ui-monospace,SFMono-Regular,Menlo,monospace;opacity:.6}
+.reader .control{margin-top:18px}
+
+@media(max-width:700px){
+.shell{padding:58px 10px 50px}.poster{width:min(96vw,calc(75svh * 638 / 534))}
+.ui{left:10px;right:10px}.brand{font-size:8px;max-width:132px}.brand span{display:none}.control{font-size:8px;padding:7px 8px}.note{display:none}.folio{font-size:9px}
+.reader{grid-template-columns:1fr;padding:64px 18px 30px;gap:26px}.reader-art{min-height:42vh}.reader h1{font-size:46px}
+}
+@media(prefers-reduced-motion:reduce){*,*:before,*:after{animation:none!important;transition-duration:.01ms!important}}
+</style>
+</head>
+<body>
+<div class="ui">
+  <div class="brand">BEA SOPHIA <span>/</span> FOUND MATTER <i>no. 01</i></div>
+  <div class="controls">
+    <button class="control" id="scatter" type="button">Disturb</button>
+    <button class="control" id="restore" type="button">Restore</button>
+    <button class="control" id="read" type="button">Read</button>
+  </div>
+</div>
+
+<main class="shell">
+<section class="poster" id="poster" aria-label="Interactive black and white photocopied zine collage. Drag the cut-out fragments, or use Disturb and Restore.">
+  <div class="scrap photo a" data-k="0" style="--ox:19%;--oy:26%;z-index:5" aria-hidden="true"></div>
+  <div class="scrap photo b" data-k="1" style="--ox:18%;--oy:77%;z-index:6" aria-hidden="true"></div>
+  <div class="scrap photo c" data-k="2" style="--ox:34%;--oy:39%;z-index:7" aria-hidden="true"></div>
+
+  <div class="scrap help" data-k="3" tabindex="0" role="button" aria-label="HELP cut-out typography">HELP</div>
+  <div class="scrap so" data-k="4" tabindex="0" role="button" aria-label="SO cut-out typography">SO</div>
+
+  <div class="scrap figure" data-k="5" tabindex="0" role="button" aria-label="Standing figure cut-out">
+    <svg viewBox="0 0 210 470" aria-hidden="true">
+      <defs>
+        <filter id="rough"><feTurbulence type="fractalNoise" baseFrequency=".08" numOctaves="2" seed="11"/><feColorMatrix type="saturate" values="0"/><feBlend mode="multiply" in2="SourceGraphic"/></filter>
+      </defs>
+      <path class="body" d="M89 13c24-7 50 8 51 35 0 15-7 25-15 34l18 24 13 83-15 77-5 73-3 126h-35l-2-128-6-58-6 61-4 125H44l2-127-2-76-15-83 11-81 23-20c-11-11-16-23-14-38 3-24 18-37 40-28Z"/>
+      <path class="legs" d="M42 291h47l4 175H53l-11-175Zm56 0h44l-8 175H98V291Z"/>
+      <rect class="noise" x="27" y="18" width="135" height="430" filter="url(#rough)"/>
+    </svg>
+  </div>
+
+  <div class="scrap read-on" data-k="6" tabindex="0" role="button" aria-label="Now read on headline"><small>IT'S WILL NEVER HAPPEN</small>now<br>read<br>on</div>
+
+  <div class="scrap article" data-k="7" tabindex="0" role="button" aria-label="Typewritten jumble sale notice">
+    there'll<br>be a giant<br><b>JUMBLE SALE</b><br>in modern dress<br>to raise bread-eyes<br>for the beautiful but<br>penniless explorers of<br>the London Free School<br><b>BRING YER er-JUNK</b> give it<br>them buy stng, singdance<br>tellthelk thetime the hue<br><b class="come">come hurry up</b><br>Saturday 21st may at<br>Golborne Rd (Mission off<br>top end Portobello Rd<br>also there: music
+  </div>
+
+  <div class="scrap music" data-k="8" tabindex="0" role="button" aria-label="Music note">music<br><span>BRING 4 BUY<br>12:30</span><br>onwards</div>
+  <div class="scrap informal" data-k="9">informal</div>
+  <div class="scrap mature" data-k="10">mature</div>
+  <div class="scrap discount" data-k="11">DISCOUNT A STOR.<br>i don't like most read 38<br>(?) past season. Friendly<br>and clever. 1£? / and 1?</div>
+  <div class="scrap quiet" data-k="12">i don't already</div>
+  <div class="scrap vertical-note" data-k="13">IT'S WILL NEVER HAPPEN</div>
+
+  <svg class="scrap doodle fish" data-k="14" tabindex="0" role="button" aria-label="Fish doodle" viewBox="0 0 180 90">
+    <path d="M8 50c27-30 63-33 99-9 18-18 37-24 59-23-11 15-12 29 1 45-23-3-40-9-57-25-34 25-67 26-102 12Z"/>
+    <path d="M64 22c11-13 17-19 31-20M73 69c8 11 17 16 29 18M29 43c11 4 13 6 18 16M117 42c-8 3-14 8-19 14"/>
+    <circle cx="45" cy="42" r="2.6" fill="#0b0b0a"/>
+  </svg>
+
+  <svg class="scrap doodle arm" data-k="15" tabindex="0" role="button" aria-label="Arm doodle" viewBox="0 0 190 96">
+    <path d="M2 54c22 4 37 8 49 14 24 12 39 8 58-9 13-12 29-22 48-28 12-4 22-11 29-22M19 48c7-11 16-16 24-21M48 67c-3 9-7 14-14 20M143 39c-3-12 0-22 10-31M151 35c7 6 14 7 23 3"/>
+  </svg>
+
+  <svg class="scrap doodle face" data-k="16" tabindex="0" role="button" aria-label="Profile doodle" viewBox="0 0 120 150">
+    <path d="M92 13c-31-8-63 13-69 42-4 20 2 34 14 49l-4 32m19-102c-8 5-12 14-13 24m28-10c5 3 8 8 10 15m-18 8c10 4 17 3 25-2m-34 25c12 4 22 2 31-5M20 67 5 75m35-29-10-12"/>
+    <path d="M73 110c11 7 24 12 41 15M65 114c-4 11-6 21-5 30"/>
+  </svg>
+
+  <svg class="scrap doodle dress" data-k="17" tabindex="0" role="button" aria-label="Polka dot dress doodle" viewBox="0 0 120 150">
+    <path d="M48 7c8 8 15 8 24 0m-25 3-12 18 10 13-18 86h67L76 41l10-13-13-18M45 41h31"/>
+    <g fill="#0b0b0a" stroke="none">
+      <circle cx="49" cy="55" r="3"/><circle cx="65" cy="51" r="3"/><circle cx="76" cy="64" r="3"/><circle cx="43" cy="70" r="3"/><circle cx="59" cy="78" r="3"/><circle cx="78" cy="83" r="3"/><circle cx="39" cy="91" r="3"/><circle cx="55" cy="99" r="3"/><circle cx="72" cy="107" r="3"/><circle cx="45" cy="117" r="3"/><circle cx="81" cy="120" r="3"/>
+    </g>
+  </svg>
+
+  <div class="scrap tiny-dancer" data-k="18" aria-hidden="true">𐂂</div>
+</section>
+</main>
+
+<div class="note"><b>drag</b> the paste-ups · <b>S</b> disturb · <b>R</b> restore · <b>space</b> read</div>
+<div class="folio">photocopy / paste / move / return</div>
+
+<aside class="reader" id="readerPanel" aria-hidden="true">
+  <div class="reader-art" aria-hidden="true"><strong>HELP<br>SO</strong></div>
+  <div class="reader-copy">
+    <p class="reader-k">Found matter / interaction study 01</p>
+    <h1>Now<br>read<br>on.</h1>
+    <p>This reconstruction treats the poster as a physical paste-up rather than a flat screenshot. Type, figures, doodles and photocopied matter remain separate objects you can lift, disturb and return.</p>
+    <p>The default state stays close to the supplied reference: off-white stock, crushed black photocopy, oversized vertical type, a standing silhouette and messy hand-cut hierarchy.</p>
+    <p class="meta">No framework. No external runtime. Pointer, touch and keyboard controls share one movement model. Reduced-motion preferences are respected.</p>
+    <button class="control" id="closeReader" type="button">Return to collage</button>
+  </div>
+</aside>
+
+<script>
+(function(){
+  var poster=document.getElementById("poster");
+  var scraps=[].slice.call(document.querySelectorAll(".scrap"));
+  var scatter=document.getElementById("scatter");
+  var restore=document.getElementById("restore");
+  var read=document.getElementById("read");
+  var panel=document.getElementById("readerPanel");
+  var close=document.getElementById("closeReader");
+  var active=null,z=100;
+  var map=[
+    [-16,-8,-1.1,1.005],[-23,18,1.3,1.01],[12,-12,-1.5,1.008],[18,-19,2.1,1.01],[-8,15,-2,1.01],
+    [34,8,1.1,1.004],[12,-22,-1.4,1.01],[27,14,1.7,1.008],[18,28,-2.2,1.01],[-11,13,1.8,1.01],
+    [9,-10,-1.7,1.012],[-14,24,1.4,1.01],[-20,-12,-2.4,1.01],[12,9,1.6,1.01],[4,-15,2,1.015],
+    [-18,8,-1.8,1.012],[13,19,2.2,1.01],[-7,21,-2,1.012],[22,9,2.8,1.01]
+  ];
+  function set(el,x,y,r,s){
+    el.dataset.x=x;el.dataset.y=y;el.dataset.r=r;el.dataset.s=s;
+    el.style.setProperty("--x",x+"px");el.style.setProperty("--y",y+"px");
+    el.style.setProperty("--r",r+"deg");el.style.setProperty("--s",s);
+  }
+  scraps.forEach(function(s){set(s,0,0,0,1)});
+  function doScatter(){
+    var scale=Math.max(.72,Math.min(1.4,poster.clientWidth/850));
+    scraps.forEach(function(s,i){var m=map[i]||[0,0,0,1];set(s,m[0]*scale,m[1]*scale,m[2],m[3]);s.style.zIndex=++z});
+  }
+  function doRestore(){scraps.forEach(function(s,i){set(s,0,0,0,1);s.style.zIndex=(i+4)});}
+  scatter.addEventListener("click",doScatter);restore.addEventListener("click",doRestore);
+  function openRead(){panel.classList.add("open");panel.setAttribute("aria-hidden","false");close.focus()}
+  function closeRead(){panel.classList.remove("open");panel.setAttribute("aria-hidden","true");read.focus()}
+  read.addEventListener("click",openRead);close.addEventListener("click",closeRead);
+
+  scraps.forEach(function(s){
+    s.addEventListener("pointerdown",function(e){
+      if(e.button!==0)return;
+      s.setPointerCapture(e.pointerId);
+      active={el:s,id:e.pointerId,sx:e.clientX,sy:e.clientY,x:+s.dataset.x||0,y:+s.dataset.y||0,r:+s.dataset.r||0,sc:+s.dataset.s||1};
+      s.classList.add("dragging");s.style.zIndex=++z;
+    });
+    s.addEventListener("pointermove",function(e){
+      if(!active||active.el!==s||active.id!==e.pointerId)return;
+      set(s,active.x+e.clientX-active.sx,active.y+e.clientY-active.sy,active.r,active.sc);
+    });
+    function release(){if(!active||active.el!==s)return;s.classList.remove("dragging");active=null}
+    s.addEventListener("pointerup",release);s.addEventListener("pointercancel",release);
+    s.addEventListener("dblclick",function(){set(s,0,0,0,1)});
+    s.addEventListener("keydown",function(e){
+      var step=e.shiftKey?12:3,x=+s.dataset.x||0,y=+s.dataset.y||0,r=+s.dataset.r||0,sc=+s.dataset.s||1,used=true;
+      if(e.key==="ArrowLeft")x-=step;else if(e.key==="ArrowRight")x+=step;else if(e.key==="ArrowUp")y-=step;else if(e.key==="ArrowDown")y+=step;else if(e.key==="Enter")r+=(r<=0?1.5:-1.5);else used=false;
+      if(used){e.preventDefault();set(s,x,y,r,sc);s.style.zIndex=++z}
+    });
+  });
+  window.addEventListener("keydown",function(e){
+    if(e.key==="Escape"&&panel.classList.contains("open")){closeRead();return}
+    if(e.target&&e.target.tagName==="BUTTON")return;
+    if(e.key==="r"||e.key==="R")doRestore();
+    else if(e.key==="s"||e.key==="S")doScatter();
+    else if(e.code==="Space"){e.preventDefault();panel.classList.contains("open")?closeRead():openRead()}
+  });
+})();
+</script>
+</body>
+</html>
