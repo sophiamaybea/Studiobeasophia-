@@ -218,7 +218,7 @@ async function startJourney(){
   g.lineTo(500,430);g.lineTo(15,430);g.closePath();g.fill();g.globalAlpha=1;
   g.strokeStyle=ink;g.lineWidth=1.2;g.stroke();for(let i=0;i<70;i++){g.fillStyle=ink;g.globalAlpha=rand()*.28;g.fillRect(rand()*w,170+rand()*200,1,2);}g.globalAlpha=1;
  });
- for(let i=0;i<13;i++){let c=sprite(atlasTex(i%2?'cloud-a':'cloud-b','#c1a0ae')||cloudTex,8+rand()*13,4+rand()*6,(rand()-.5)*42,-13-rand()*15,rand()*20-11,.55+rand()*.35);c.rotation.z=(rand()-.5)*.24;clouds.push(c);}
+ for(let i=0;i<6;i++){let c=sprite(atlasTex(i%2?'cloud-a':'cloud-b','#c1a0ae')||cloudTex,8+rand()*8,3+rand()*4,(rand()-.5)*38,-14-rand()*11,-15-rand()*8,.35+rand()*.2);c.rotation.z=(rand()-.5)*.24;clouds.push(c);}
  // Individual buildings are transparent ink illustrations on planes scattered through real 3D depth.
  const buildings=[],windows=[];
  function buildingTex(index){
@@ -237,11 +237,11 @@ async function startJourney(){
    for(let i=0;i<190;i++){g.fillStyle=ink;g.globalAlpha=rand()*.55;const xx=x+rand()*width,yy=top+rand()*(500-top);g.fillRect(xx,yy,rand()*2.4,.7+rand()*1.4);}g.globalAlpha=1;
   },420,520);
  }
- for(let i=0;i<21;i++){
-  const x=(i-10)*3.2+(rand()-.5)*2,depth=-13+(i%5)*5;
-  const h=12+rand()*10;
+ for(let i=0;i<17;i++){
+  const x=(i-8)*2.65+(rand()-.5)*1.5,depth=-15+(i%4)*2;
+  const h=8+rand()*6;
   const assetName=['city-a','city-b','city-c','city-d'][i%4];
-  const b=sprite(atlasTex(assetName,i%4===1?'#c3b8b6':'#e7e4e2')||buildingTex(i),h*.98,h,x,-46+h*.1,depth);
+  const b=sprite(atlasTex(assetName,i%4===1?'#c3b8b6':'#e7e4e2')||buildingTex(i),h*.82,h,x,-59+h*.25,depth);
   buildings.push(b);
  }
  const walkers=[];
@@ -266,9 +266,9 @@ async function startJourney(){
  }
  const peopleTex=Array.from({length:8},(_,i)=>atlasTex('people-'+String.fromCharCode(97+i),i%3===0?'#cfbfc4':'#f0e8e0')||figureTex(i));
  for(let i=0;i<23;i++){
-  const x=(rand()-.5)*35,z=-4+rand()*17;
-  const scale=.6+rand()*.7;
-  const person=sprite(peopleTex[i%peopleTex.length],3.4*scale,6.5*scale,x,-61.6-rand()*3,z,.95);
+  const x=(rand()-.5)*27,z=-16+rand()*8;
+  const scale=.46+rand()*.37;
+  const person=sprite(peopleTex[i%peopleTex.length],3.4*scale,6.5*scale,x,-68-rand()*3,z,.95);
   walkers.push({mesh:person,phase:rand()*6.28,baseX:x,speed:.07+rand()*.19});
  }
  const storefront=canvasTex((g,w,h)=>{
@@ -281,7 +281,7 @@ async function startJourney(){
   g.fillStyle=ink;g.fillRect(267,241,2,198);g.beginPath();g.arc(257,352,7,0,7);g.fill();
   speckle(g,w,h,170);
  });
- const door=sprite(storefront,20,20,0,-91,-12);
+ const door=sprite(storefront,14.5,17,9,-91,-12);
  const galleryVisitor=atlasImage?sprite(atlasTex('people-d','#1b2944'),5.5,13,11,-102,-8,.76):null;
  const galleryPaper=canvasTex((g,w,h)=>{
   g.fillStyle=paper;g.fillRect(50,45,415,440);
@@ -292,7 +292,7 @@ async function startJourney(){
  });
  const panels=[];
  for(let i=0;i<4;i++){
-  let p=sprite(galleryPaper,8,10,(i-1.5)*9,-111,(i%2)*4-10);
+  let p=sprite(galleryPaper,6.8,8.8,9+(i-1.5)*6.2,-125,(i%2)*3-10);
   p.rotation.y=(i-1.5)*-.12;panels.push(p);
  }
  const studioTable=new THREE.Mesh(new THREE.BoxGeometry(16,.55,5),new THREE.MeshStandardMaterial({color:'#2a2634',roughness:.9}));
@@ -343,7 +343,7 @@ async function startJourney(){
   clouds.forEach((x,i)=>{x.position.x+=Math.sin(clock*.25+i)*.0004});
   walkers.forEach(({mesh,phase,baseX,speed},i)=>{
    mesh.position.x=baseX+Math.sin(clock*.3*speed*20+phase)*.18;
-   mesh.position.y=-61.6-(i%5)*.7+Math.sin(clock*1.2+phase)*.07;
+   mesh.position.y=-68-(i%5)*.7+Math.sin(clock*1.2+phase)*.07;
    mesh.rotation.z=Math.sin(clock*.8+phase)*.013;
   });
   let t=smooth(.27,.64,p);
@@ -357,7 +357,7 @@ async function startJourney(){
   panels.forEach(x=>{x.material.opacity=smooth(.71,.82,p)*(1-smooth(.91,.96,p));x.visible=p>.68&&p<.98});
   if(galleryVisitor){galleryVisitor.visible=p>.72&&p<.96;galleryVisitor.material.opacity=smooth(.73,.84,p)*(1-smooth(.90,.96,p));}
   studioTable.visible=p>.82;lampshade.visible=p>.82;
-  for(const cue of cues){const node=document.getElementById(cue.id);const fade=Math.min(smooth(cue.a,cue.a+.025,p),1-smooth(cue.b-.03,cue.b,p));const opacity=Math.max(0,fade);node.style.opacity=String(opacity);node.style.visibility=opacity<.01?'hidden':'visible';node.style.transform='translate3d(0,'+((1-opacity)*25)+'px,0)';node.style.pointerEvents=opacity>.55?'auto':'none';}
+  for(const cue of cues){const node=document.getElementById(cue.id);const fade=Math.min(cue.a===0?1:smooth(cue.a,cue.a+.025,p),1-smooth(cue.b-.03,cue.b,p));const opacity=Math.max(0,fade);node.style.opacity=String(opacity);node.style.visibility=opacity<.01?'hidden':'visible';node.style.transform='translate3d(0,'+((1-opacity)*25)+'px,0)';node.style.pointerEvents=opacity>.55?'auto':'none';}
   document.body.classList.toggle('paper-phase',p>.72);
   const chap=p<.2?1:p<.39?2:p<.63?3:p<.84?4:5;
   document.querySelector('#progress .count').textContent=String(chap).padStart(2,'0')+' / 05';
