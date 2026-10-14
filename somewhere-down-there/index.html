@@ -1,0 +1,343 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#091936">
+<meta name="description" content="Studio Bea Sophia. An independent creative web studio. Enter an illustrated world and travel from the stars to a small gallery of other people's stories.">
+<title>Somewhere, Down There — Studio Bea Sophia</title>
+<style>
+:root{--navy:#091936;--ink:#162441;--paper:#f0e9dc;--rose:#b58b99;--amber:#d9b682}
+*,*:before,*:after{box-sizing:border-box}
+html{scroll-behavior:auto}body{margin:0;overflow-x:hidden;background:var(--navy);color:var(--paper);font-family:Georgia,"Times New Roman",serif}
+button,a{touch-action:manipulation}a{color:inherit}button{font:inherit}
+#world{position:fixed;inset:0;width:100vw;height:100vh;display:block;z-index:1}
+#world:focus{outline:0}
+#filmgrain{pointer-events:none;position:fixed;inset:0;z-index:8;opacity:.09;mix-blend-mode:multiply;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 190 190' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.83' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.44'/%3E%3C/svg%3E")}
+#track{height:880vh;position:relative;z-index:0}
+#brand{position:fixed;z-index:12;top:27px;left:clamp(22px,3.3vw,62px);font:600 clamp(14px,1.07vw,18px)/.96 Georgia,serif;letter-spacing:-.04em;text-decoration:none;mix-blend-mode:difference;color:#fff}
+#brand span{display:block;font:9px/1.3 Arial,sans-serif;letter-spacing:.18em;text-transform:uppercase;margin-top:8px}
+#nav{position:fixed;right:clamp(18px,3vw,60px);top:32px;z-index:12;display:flex;gap:26px;align-items:center}
+#nav button,#nav a{color:#fff;border:0;border-bottom:1px solid rgba(255,255,255,.6);background:transparent;text-transform:uppercase;letter-spacing:.17em;text-decoration:none;font:9px/1.7 Arial,sans-serif;cursor:pointer;padding:0 0 5px}
+#nav button:hover,#nav a:hover{border-color:white}
+#progress{position:fixed;left:clamp(22px,3.3vw,62px);bottom:36px;z-index:14;display:flex;gap:16px;align-items:center;font:10px Arial,sans-serif;letter-spacing:.11em}
+#progress .bar{width:84px;height:1px;background:rgba(241,234,221,.35);position:relative}
+#progress .bar i{display:block;position:absolute;background:currentColor;left:0;top:-1px;height:3px;width:0}
+#progress .count{min-width:82px}
+#scroll-cue{position:fixed;right:clamp(22px,3.3vw,62px);bottom:34px;z-index:12;writing-mode:vertical-rl;text-transform:uppercase;font:9px Arial,sans-serif;letter-spacing:.24em;opacity:.8}
+#scroll-cue:after{content:"";display:block;margin:18px auto 0;height:54px;width:1px;background:currentColor}
+#overlay{position:fixed;inset:0;z-index:6;pointer-events:none}
+.cue{position:absolute;max-width:760px;opacity:0;will-change:opacity,transform;transform:translate3d(0,20px,0);visibility:hidden;text-shadow:0 2px 50px rgba(4,16,40,.15)}
+.cue .eyebrow{font:10px/1.5 Arial,sans-serif;text-transform:uppercase;letter-spacing:.22em;display:block;margin:0 0 22px}
+.cue h1,.cue h2{font-weight:400;letter-spacing:-.07em;margin:0;line-height:.83}
+.cue h1{font-size:clamp(78px,12.1vw,226px)}
+.cue h2{font-size:clamp(59px,9vw,154px)}
+.cue p{font-size:clamp(17px,1.5vw,25px);line-height:1.3;max-width:400px;margin:24px 0 0}
+.cue em{font-weight:normal;font-style:italic}
+.cue a{pointer-events:auto;text-decoration:none;border-bottom:1px solid currentColor;padding-bottom:6px;display:inline-block;font:11px/1.5 Arial,sans-serif;letter-spacing:.13em;text-transform:uppercase;margin-top:35px}
+.cue a:hover{opacity:.62}
+#title-cue{top:25%;left:clamp(25px,8vw,160px);width:84vw}
+#title-cue h1 span{display:block}
+#title-cue .subline{font-style:italic;font-size:clamp(30px,4vw,60px);letter-spacing:-.06em;margin-top:11px}
+#planet-cue{top:26%;left:10%;width:66vw}
+#planet-cue h2{font-size:clamp(40px,6.7vw,110px)}
+#city-cue{top:14%;right:9%;width:48vw;text-align:left}
+#city-cue h2{font-size:clamp(46px,7vw,118px)}
+#paper-cue{bottom:15%;left:9%;width:52vw}
+#paper-cue h2{font-size:clamp(45px,6vw,100px)}
+#gallery-cue{top:23%;left:10%;width:47vw;color:var(--ink);text-shadow:none}
+#gallery-cue h2{font-size:clamp(58px,8vw,142px)}
+#studio-cue{top:24%;left:9%;color:var(--ink);width:75vw;text-shadow:none}
+#studio-cue h2{font-size:clamp(60px,10.5vw,173px)}
+#studio-cue .links{display:flex;flex-wrap:wrap;gap:30px;pointer-events:auto}
+#studio-cue .links a{margin-top:34px}
+#attribution{position:fixed;z-index:12;left:50%;transform:translateX(-50%);bottom:30px;font:9px Arial,sans-serif;letter-spacing:.15em;text-transform:uppercase;white-space:nowrap;opacity:.65}
+#fallback{display:none}
+body.paper-phase #brand,body.paper-phase #nav a,body.paper-phase #nav button,body.paper-phase #progress,body.paper-phase #scroll-cue,body.paper-phase #attribution{color:var(--ink);mix-blend-mode:normal}
+body.paper-phase #nav a,body.paper-phase #nav button{border-color:rgba(16,32,56,.4)}
+body.paper-phase #progress .bar{background:rgba(16,32,56,.3)}
+#loading{position:fixed;inset:0;background:var(--navy);z-index:30;display:grid;place-items:center;text-align:center;transition:opacity .7s,visibility .7s}
+#loading span{display:block;font:italic clamp(26px,4vw,56px)/1 Georgia,serif}
+#loading small{display:block;font:9px Arial,sans-serif;letter-spacing:.25em;margin-top:25px;text-transform:uppercase}
+#loading.hidden{opacity:0;visibility:hidden}
+#accessibility{position:fixed;bottom:34px;right:9%;font:9px Arial,sans-serif}
+#no-webgl{display:none}
+@media(max-width:700px){
+ #brand{top:20px}#nav{top:24px;gap:12px}#nav a,#nav button{font-size:8px}
+ #nav button:nth-child(2){display:none}
+ #title-cue{top:28%;left:6%}#title-cue h1{font-size:clamp(65px,17vw,110px)}
+ #title-cue .subline{font-size:34px}
+ #planet-cue{left:7%;width:85vw;top:23%}#planet-cue h2{font-size:clamp(42px,10vw,85px)}
+ #city-cue{right:6%;top:15%;width:80vw}#city-cue h2{font-size:clamp(54px,10.5vw,95px)}
+ #paper-cue{bottom:16%;left:8%;width:87vw}#paper-cue h2{font-size:clamp(45px,9vw,85px)}
+ #gallery-cue{left:7%;width:86vw;top:15%}#gallery-cue h2{font-size:clamp(58px,13vw,92px)}
+ #studio-cue{top:18%;left:7%;width:87vw}#studio-cue h2{font-size:clamp(70px,14vw,105px)}
+ #studio-cue p{font-size:17px;max-width:270px}
+ #attribution{display:none}#scroll-cue{right:18px}#progress{bottom:27px;left:22px}
+}
+@media(prefers-reduced-motion:reduce){
+ #track,#overlay,#world,#scroll-cue,#progress{display:none!important}
+ #fallback{display:block;position:relative;background:var(--paper);color:var(--ink);padding:95px 8%}
+ #fallback section{min-height:50vh;padding:70px 0;border-bottom:1px solid #a49b8e}
+ #fallback h1,#fallback h2{font-size:clamp(44px,9vw,94px);font-weight:400;letter-spacing:-.07em;line-height:.9}
+ #fallback p{font-size:22px;line-height:1.4}
+ #fallback a{font:15px Arial,sans-serif}
+ #nav button{display:none}
+}
+</style>
+</head>
+<body>
+<div id="loading"><div><span>A small universe is being assembled.</span><small>Please wait a moment</small></div></div>
+<a id="brand" href="#top" aria-label="Studio Bea Sophia, back to the beginning">Studio Bea Sophia<span>Independent creative studio</span></a>
+<nav id="nav" aria-label="Journey navigation">
+<button type="button" data-scroll="0.41">The City</button>
+<button type="button" data-scroll="0.72">The Gallery</button>
+<a href="mailto:hello@studiobeasophia.com?subject=A%20little%20world%20of%20our%20own">Work together ↗</a>
+</nav>
+<canvas id="world" aria-label="Scroll-controlled 3D illustration of an astronaut descending into an ink-drawn city, then entering a gallery."></canvas>
+<div id="filmgrain"></div>
+<div id="overlay" aria-hidden="false">
+ <div id="title-cue" class="cue"><span class="eyebrow">A small expedition through the ordinary</span><h1><span>STUDIO</span><span>BEA SOPHIA</span></h1><div class="subline">Somewhere, down there.</div></div>
+ <div id="planet-cue" class="cue"><span class="eyebrow">I / In which we leave the stars</span><h2>There are rather a lot of things happening on Earth.</h2><p>Most of them will never make the news.</p></div>
+ <div id="city-cue" class="cue"><span class="eyebrow">II / Among the umbrellas</span><h2>Millions of people.<br><em>Millions of little worlds.</em></h2></div>
+ <div id="paper-cue" class="cue"><span class="eyebrow">III / One quite ordinary piece of paper</span><h2>Everyone has a story.</h2><p>Some of them are still looking for somewhere to live.</p></div>
+ <div id="gallery-cue" class="cue"><span class="eyebrow">IV / A door halfway down the street</span><h2>THE PAGE<br><em>GALLERY</em></h2><p>I built a little home for other people's ideas. Somewhere a poem could have its own room.</p><a href="https://pagegalleryjournal.com" target="_blank" rel="noopener">Visit The Page Gallery ↗</a></div>
+ <div id="studio-cue" class="cue"><span class="eyebrow">V / Where other worlds are made</span><h2>What shall<br><em>we make?</em></h2><p>Independent creative web design. Beautifully odd digital places, made for people with something worth saying.</p><div class="links"><a href="mailto:hello@studiobeasophia.com?subject=Let's%20make%20somewhere">Begin a conversation ↗</a><a href="https://pagegalleryjournal.com" target="_blank" rel="noopener">Explore the journal ↗</a></div></div>
+</div>
+<div id="progress"><span class="count">01 / 05</span><span class="bar"><i></i></span></div>
+<div id="scroll-cue" aria-hidden="true">Scroll to wander</div>
+<div id="attribution">A moving illustrated world · Made slowly, on purpose</div>
+<div id="track" id="top" aria-hidden="true"></div>
+<main id="fallback">
+<section><h1>Studio Bea Sophia</h1><p>Somewhere, down there.</p><p>An independent creative web studio, building strange, thoughtful little places on the internet.</p></section>
+<section><h2>Millions of little worlds.</h2><p>There are quite a lot of things happening on Earth. Most of them go unnoticed. Everyone has a story.</p></section>
+<section><h2>The Page Gallery.</h2><p>I wanted somewhere for some of those stories to live.</p><a href="https://pagegalleryjournal.com">Visit the journal ↗</a></section>
+<section><h2>What shall we make?</h2><p>Websites with personality, imagination and somewhere interesting to take you.</p><a href="mailto:hello@studiobeasophia.com">Begin a conversation ↗</a></section>
+</main>
+<div id="no-webgl" role="status">A simpler version of the journey is available below.</div>
+<script type="module">
+import * as THREE from "https://cdn.jsdelivr.net/npm/three@0.182.0/build/three.module.js";
+const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
+const loader=document.getElementById('loading');
+if(reduced){loader.classList.add('hidden');document.body.classList.add('paper-phase');}
+else {
+ try {startJourney();}
+ catch(err){console.error(err);document.querySelector('#no-webgl').style.display='block';document.querySelector('#fallback').style.display='block';loader.classList.add('hidden');}
+}
+function startJourney(){
+ const canvas=document.getElementById('world'),renderer=new THREE.WebGLRenderer({canvas,antialias:true,alpha:false,powerPreference:'high-performance'});
+ renderer.setPixelRatio(Math.min(devicePixelRatio||1,1.7));
+ renderer.outputColorSpace=THREE.SRGBColorSpace;
+ const scene=new THREE.Scene();
+ const navy=new THREE.Color('#091936'),deepBlue=new THREE.Color('#12335b'),cream=new THREE.Color('#efe7d9'),nightInk=new THREE.Color('#101b30');
+ scene.background=navy.clone();
+ const camera=new THREE.PerspectiveCamera(42,innerWidth/innerHeight,.1,230);
+ camera.position.set(0,2,34);
+ const root=new THREE.Group();scene.add(root);
+ const ink='#17233b',paper='#f0e9dc',rose='#bd93a2',gold='#dec59d';
+ let seed=76;function rand(){seed=(seed*1664525+1013904223)>>>0;return seed/4294967296;}
+ function canvasTex(draw,w=512,h=512){
+  const c=document.createElement('canvas');c.width=w;c.height=h;
+  const ctx=c.getContext('2d');ctx.imageSmoothingEnabled=true;
+  draw(ctx,w,h);const t=new THREE.CanvasTexture(c);t.colorSpace=THREE.SRGBColorSpace;t.anisotropy=Math.min(renderer.capabilities.getMaxAnisotropy(),8);return t;
+ }
+ function sprite(texture,w,h,x,y,z,opacity=1){
+  const m=new THREE.MeshBasicMaterial({map:texture,transparent:true,depthWrite:false,opacity,side:THREE.DoubleSide});
+  const mesh=new THREE.Mesh(new THREE.PlaneGeometry(w,h),m);mesh.position.set(x,y,z);scene.add(mesh);return mesh;
+ }
+ function inkline(g,points,color=ink,width=3){g.strokeStyle=color;g.lineWidth=width;g.lineJoin='round';g.lineCap='round';g.beginPath();points.forEach((p,i)=>i?g.lineTo(...p):g.moveTo(...p));g.stroke();}
+ function speckle(g,w,h,n,color=ink){
+  g.fillStyle=color;for(let i=0;i<n;i++){const x=rand()*w,y=rand()*h,r=rand()*1.3+.15;g.globalAlpha=.1+rand()*.5;g.fillRect(x,y,r,r);}
+  g.globalAlpha=1;
+ }
+ const astroTexture=canvasTex((g,w,h)=>{
+  g.lineCap='round';g.lineJoin='round';
+  g.save();g.translate(30,35);
+  const line=(pts,wd=4)=>inkline(g,pts,ink,wd);
+  g.strokeStyle=paper;g.lineWidth=9;g.beginPath();g.ellipse(243,166,82,85,-.12,0,7);g.stroke();
+  g.fillStyle='#eee9e0';g.strokeStyle=ink;g.lineWidth=5;
+  g.beginPath();g.moveTo(168,190);g.lineTo(130,251);g.lineTo(52,188);g.lineTo(42,204);g.lineTo(136,305);g.lineTo(176,281);g.lineTo(182,362);g.lineTo(228,401);g.lineTo(249,390);g.lineTo(217,319);g.lineTo(284,380);g.lineTo(301,367);g.lineTo(242,258);g.lineTo(331,246);g.lineTo(343,216);g.lineTo(284,209);g.closePath();g.fill();g.stroke();
+  g.fillStyle='#d9d7d1';g.fillRect(287,202,45,98);g.strokeRect(287,202,45,98);
+  g.fillStyle=ink;g.beginPath();g.arc(230,157,66,0,Math.PI*2);g.fill();
+  g.fillStyle='#f0e9df';g.beginPath();g.arc(230,157,56,0,Math.PI*2);g.fill();
+  g.strokeStyle=ink;g.lineWidth=5;g.stroke();
+  g.fillStyle='#c6c0b8';g.beginPath();g.ellipse(232,161,39,44,0,0,Math.PI*2);g.fill();g.stroke();
+  g.fillStyle=ink;g.beginPath();g.arc(217,151,3,0,7);g.arc(242,150,3,0,7);g.fill();
+  line([[219,176],[235,181],[247,173]],2);
+  line([[40,205],[19,190],[12,177]],8);line([[43,204],[23,217],[10,210]],7);
+  line([[301,366],[313,393],[329,400]],11);line([[229,402],[239,419],[259,417]],12);
+  for(let y=246;y<371;y+=13){const t=(y-246)/125;line([[149+t*42,y],[194+t*32,y+6]],1.4);}
+  for(let x=58;x<135;x+=12)line([[x,204+(x-58)*.8],[x+12,217+(x-58)*.9]],1.7);
+  for(let i=0;i<13;i++){let xx=220+i*5,yy=310+i*5;line([[xx,yy],[xx+19,yy+12]],1.8);}
+  g.strokeStyle=ink;g.lineWidth=2;g.strokeRect(203,228,44,44);g.fillStyle=rose;g.fillRect(218,245,11,11);
+  g.restore();speckle(g,w,h,90);
+ },480,500);
+ const astronaut=sprite(astroTexture,14.2,14.7,-7,1,4);astronaut.rotation.z=-.10;
+ const ring=new THREE.Mesh(new THREE.TorusGeometry(5.6,.025,3,220),new THREE.MeshBasicMaterial({color:'#e0c9c6',transparent:true,opacity:.55}));ring.position.set(11,-6,-8);ring.rotation.set(.3,.4,.2);scene.add(ring);
+ const moon=new THREE.Mesh(new THREE.SphereGeometry(5.1,48,32),new THREE.MeshStandardMaterial({color:'#b7b9c6',roughness:1,metalness:0}));
+ moon.position.set(12,-6,-8);scene.add(moon);
+ scene.add(new THREE.AmbientLight('#dfebff',2.7));
+ const sun=new THREE.DirectionalLight('#efede8',3);sun.position.set(-8,14,18);scene.add(sun);
+ const crater=new THREE.Mesh(new THREE.SphereGeometry(.65,20,12),new THREE.MeshBasicMaterial({color:'#6f7d8f',transparent:true,opacity:.22}));
+ crater.scale.z=.04;crater.position.set(11.6,-3.7,-3.4);scene.add(crater);
+ // Hundreds of paper-cut stars exist at different depths, not on a single background.
+ const stars=[];const starGeo=new THREE.SphereGeometry(.022,5,5);
+ const starMat=new THREE.MeshBasicMaterial({color:'#f3ebde',transparent:true,opacity:.76});
+ for(let i=0;i<460;i++){const s=new THREE.Mesh(starGeo,starMat);s.position.set((rand()-.5)*70,(rand()-.5)*47+0,(rand()-.5)*35-14);s.scale.setScalar(.6+rand()*3);scene.add(s);stars.push(s);}
+ const clouds=[];
+ const cloudTex=canvasTex((g,w,h)=>{
+  g.fillStyle='#d9bed0';g.globalAlpha=.86;g.beginPath();g.moveTo(2,330);
+  g.bezierCurveTo(70,270,85,290,116,250);g.bezierCurveTo(141,141,199,150,241,228);
+  g.bezierCurveTo(271,146,336,152,363,243);g.bezierCurveTo(414,208,480,256,507,332);
+  g.lineTo(500,430);g.lineTo(15,430);g.closePath();g.fill();g.globalAlpha=1;
+  g.strokeStyle=ink;g.lineWidth=1.2;g.stroke();for(let i=0;i<70;i++){g.fillStyle=ink;g.globalAlpha=rand()*.28;g.fillRect(rand()*w,170+rand()*200,1,2);}g.globalAlpha=1;
+ });
+ for(let i=0;i<13;i++){let c=sprite(cloudTex,8+rand()*13,4+rand()*6,(rand()-.5)*42,-13-rand()*15,rand()*20-11,.55+rand()*.35);c.rotation.z=(rand()-.5)*.24;clouds.push(c);}
+ // Individual buildings are transparent ink illustrations on planes scattered through real 3D depth.
+ const buildings=[],windows=[];
+ function buildingTex(index){
+  return canvasTex((g,w,h)=>{
+   const width=250+index%3*42, x=(w-width)/2, top=65+(index%4)*17;
+   g.fillStyle=index%4===0?'#283142':index%4===1?'#f0e9dc':index%4===2?'#202737':'#6d6c74';
+   g.strokeStyle=ink;g.lineWidth=3;g.beginPath();g.moveTo(x,500);g.lineTo(x+4,top+15);
+   g.lineTo(x+width*.35,top+5);g.lineTo(x+width*.48,top-25);g.lineTo(x+width*.55,top+2);g.lineTo(x+width,top+9);g.lineTo(x+width+2,500);g.closePath();g.fill();g.stroke();
+   for(let row=0;row<11;row++)for(let col=0;col<4;col++){
+    const wx=x+25+col*(width-50)/4+(rand()-.5)*3,wy=top+42+row*32+(rand()-.5)*3;
+    if(wy>490)continue;
+    g.fillStyle=(row+col+index)%7===0?gold:(index%4===1?ink:'#e9e2d6');
+    g.globalAlpha=(row+col+index)%7===0?.95:.8;g.fillRect(wx,wy,13+rand()*9,21+rand()*6);g.globalAlpha=1;
+    g.strokeStyle=ink;g.lineWidth=1;g.strokeRect(wx,wy,16,24);
+   }
+   for(let i=0;i<190;i++){g.fillStyle=ink;g.globalAlpha=rand()*.55;const xx=x+rand()*width,yy=top+rand()*(500-top);g.fillRect(xx,yy,rand()*2.4,.7+rand()*1.4);}g.globalAlpha=1;
+  },420,520);
+ }
+ for(let i=0;i<21;i++){
+  const x=(i-10)*3.2+(rand()-.5)*2,depth=-13+(i%5)*5;
+  const h=12+rand()*10;
+  const b=sprite(buildingTex(i),h*.81,h,x,-46+h*.1,depth);
+  buildings.push(b);
+ }
+ const walkers=[];
+ function figureTex(id){
+  return canvasTex((g,w,h)=>{
+    g.translate(1,12);
+    const x=125,y=95,wide=76;
+    g.fillStyle=id%4===0?'#2d3441':id%4===1?'#171c27':id%4===2?'#787783':'#cbc8c2';
+    g.strokeStyle=ink;g.lineWidth=4;
+    // coat, shoes, face, and an oversized black-and-white umbrella
+    g.beginPath();g.moveTo(105,180);g.lineTo(145,180);g.lineTo(176,337);g.lineTo(86,337);g.closePath();g.fill();g.stroke();
+    g.beginPath();g.moveTo(100,332);g.lineTo(95,425);g.lineTo(80,445);g.moveTo(145,332);g.lineTo(156,422);g.lineTo(175,430);g.stroke();
+    g.fillStyle='#dedad1';g.beginPath();g.ellipse(125,151,22,30,0,0,Math.PI*2);g.fill();g.stroke();
+    g.fillStyle=ink;g.fillRect(121,176,7,65);
+    g.beginPath();g.moveTo(120,61);g.quadraticCurveTo(54,67,10,150);g.quadraticCurveTo(118,111,239,148);g.quadraticCurveTo(185,70,120,61);g.fillStyle='#eee7df';g.fill();g.stroke();
+    g.beginPath();g.moveTo(120,61);g.lineTo(121,259);g.stroke();
+    g.lineWidth=1.65;
+    for(let u=0;u<8;u++){const topx=40+u*21;g.beginPath();g.moveTo(120,61);g.quadraticCurveTo(topx,87,12+u*30,144);g.stroke();}
+    for(let u=0;u<8;u++){g.beginPath();g.moveTo(15+u*25,108);g.lineTo(35+u*24,141);g.stroke();}
+    for(let i=0;i<55;i++){g.globalAlpha=rand()*.55;g.fillStyle=ink;g.fillRect(80+rand()*93,192+rand()*135,rand()*2+1,rand()*2+1);}g.globalAlpha=1;
+  },260,480);
+ }
+ const peopleTex=Array.from({length:6},(_,i)=>figureTex(i));
+ for(let i=0;i<23;i++){
+  const x=(rand()-.5)*35,z=-4+rand()*17;
+  const scale=.6+rand()*.7;
+  const person=sprite(peopleTex[i%6],3.4*scale,6.5*scale,x,-61.6-rand()*3,z,.95);
+  walkers.push({mesh:person,phase:rand()*6.28,baseX:x,speed:.07+rand()*.19});
+ }
+ const storefront=canvasTex((g,w,h)=>{
+  g.fillStyle='#e9dfd0';g.strokeStyle=ink;g.lineWidth=5;
+  g.fillRect(50,140,412,350);g.strokeRect(50,140,412,350);
+  g.fillStyle=ink;g.fillRect(80,175,355,280);
+  g.fillStyle='#c5a39b';g.fillRect(113,185,300,250);
+  g.fillStyle='#efeadc';g.beginPath();g.moveTo(135,435);g.lineTo(135,280);g.bezierCurveTo(135,185,393,185,393,280);g.lineTo(393,435);g.closePath();g.fill();
+  g.stroke();g.fillStyle=ink;g.font='33px Georgia';g.textAlign='center';g.fillText('THE PAGE GALLERY',255,165);
+  g.fillStyle=ink;g.fillRect(267,241,2,198);g.beginPath();g.arc(257,352,7,0,7);g.fill();
+  speckle(g,w,h,170);
+ });
+ const door=sprite(storefront,20,20,0,-91,-12);
+ const galleryPaper=canvasTex((g,w,h)=>{
+  g.fillStyle=paper;g.fillRect(50,45,415,440);
+  g.strokeStyle=ink;g.lineWidth=3;g.strokeRect(50,45,415,440);
+  g.fillStyle=ink;g.font='italic 35px Georgia';g.textAlign='center';
+  g.fillText('Somewhere a poem',258,202);g.fillText('could have its own',258,255);g.fillText('little room.',258,308);
+  speckle(g,w,h,90);
+ });
+ const panels=[];
+ for(let i=0;i<4;i++){
+  let p=sprite(galleryPaper,8,10,(i-1.5)*9,-111,(i%2)*4-10);
+  p.rotation.y=(i-1.5)*-.12;panels.push(p);
+ }
+ const studioTable=new THREE.Mesh(new THREE.BoxGeometry(16,.55,5),new THREE.MeshStandardMaterial({color:'#2a2634',roughness:.9}));
+ studioTable.position.set(2,-123,-10);scene.add(studioTable);
+ const tableLegMat=new THREE.MeshBasicMaterial({color:'#554658'});
+ for(const x of [-5,7])for(const z of [-11,-8]){const leg=new THREE.Mesh(new THREE.CylinderGeometry(.11,.13,4,8),tableLegMat);leg.position.set(x,-125,z);scene.add(leg);}
+ const lampshade=new THREE.Mesh(new THREE.ConeGeometry(1.8,2.1,5),new THREE.MeshBasicMaterial({color:'#bd93a2'}));lampshade.position.set(5,-118,-8);scene.add(lampshade);
+ const papers=[];
+ const papertex=canvasTex((g,w,h)=>{
+  g.fillStyle='#f4eae0';g.strokeStyle=ink;g.lineWidth=6;
+  g.beginPath();g.moveTo(95,45);g.lineTo(390,67);g.lineTo(457,407);g.lineTo(89,438);g.closePath();g.fill();g.stroke();
+  for(let i=0;i<12;i++){g.strokeStyle=i%3===0?rose:ink;g.lineWidth=i%3===0?3:2;g.beginPath();g.moveTo(150,110+i*19);g.lineTo(355-(i%4)*27,110+i*19);g.stroke();}
+ });
+ const paperFrag=sprite(papertex,2.7,3.2,8,-21,12);
+ function lerp(a,b,t){return a+(b-a)*t}function smooth(a,b,v){const t=Math.min(1,Math.max(0,(v-a)/(b-a)));return t*t*(3-2*t)}
+ const cues=[
+  {id:'title-cue',a:0,b:.13},{id:'planet-cue',a:.13,b:.29},
+  {id:'city-cue',a:.34,b:.48},{id:'paper-cue',a:.50,b:.66},
+  {id:'gallery-cue',a:.68,b:.83},{id:'studio-cue',a:.86,b:1.08}
+ ];
+ let desired=0,current=0,mouseX=0,mouseY=0,running=true;
+ const stageY=[2,-15,-32,-49,-63,-75,-91,-112,-126];
+ const stageP=[0,.12,.24,.38,.50,.61,.73,.85,1];
+ function at(p,values){let i=0;while(i<stageP.length-2 && p>stageP[i+1])i++;const t=smooth(stageP[i],stageP[i+1],p);return lerp(values[i],values[i+1],t);}
+ function getProgress(){const max=Math.max(1,document.documentElement.scrollHeight-innerHeight);return Math.max(0,Math.min(1,scrollY/max));}
+ window.addEventListener('scroll',()=>{desired=getProgress();},{passive:true});
+ window.addEventListener('pointermove',e=>{mouseX=(e.clientX/innerWidth-.5)*2;mouseY=(e.clientY/innerHeight-.5)*2;},{passive:true});
+ for(const b of document.querySelectorAll('[data-scroll]'))b.addEventListener('click',()=>scrollTo({top:(document.documentElement.scrollHeight-innerHeight)*Number(b.dataset.scroll),behavior:'smooth'}));
+ document.getElementById('brand').addEventListener('click',e=>{e.preventDefault();scrollTo({top:0,behavior:'smooth'});});
+ function resize(){camera.aspect=innerWidth/innerHeight;camera.fov=innerWidth<700?49:42;camera.updateProjectionMatrix();renderer.setSize(innerWidth,innerHeight);}
+ window.addEventListener('resize',resize,{passive:true});resize();
+ function frame(time){
+  if(!running)return;requestAnimationFrame(frame);
+  current=lerp(current,desired,.075);
+  const p=current, clock=time*.001;
+  camera.position.y=at(p,stageY);
+  camera.position.z=at(p,[34,30,25,22,15,16,21,25,30]);
+  camera.position.x=at(p,[1,2,1,0,-1,.2,.5,0,0])+mouseX*.5;
+  camera.rotation.z=at(p,[0,.012,0,-.018,-.005,0,0,0,0]);
+  camera.lookAt(camera.position.x*.2,-2+camera.position.y-mouseY*.25,-22);
+  // Paper is the only element travelling between the different worlds.
+  paperFrag.position.y=camera.position.y-3;
+  paperFrag.position.x=at(p,[11,8,7,4,1,-2,-5,-2,5])+Math.sin(clock*1.1)*.3;
+  paperFrag.rotation.z=clock*.15+p*8;paperFrag.rotation.y=clock*.24;
+  paperFrag.material.opacity=Math.min(1,smooth(.13,.23,p))*(1-smooth(.74,.82,p));
+  astronaut.position.y=1+Math.sin(clock*.7)*.35;astronaut.rotation.z=-.1+Math.sin(clock*.4)*.06;
+  moon.rotation.y=clock*.012;ring.rotation.z=clock*.016;
+  clouds.forEach((x,i)=>{x.position.x+=Math.sin(clock*.25+i)*.0004});
+  walkers.forEach(({mesh,phase,baseX,speed},i)=>{
+   mesh.position.x=baseX+Math.sin(clock*.3*speed*20+phase)*.18;
+   mesh.position.y=-61.6-(i%5)*.7+Math.sin(clock*1.2+phase)*.07;
+   mesh.rotation.z=Math.sin(clock*.8+phase)*.013;
+  });
+  let t=smooth(.27,.64,p);
+  scene.background.copy(navy).lerp(deepBlue,smooth(.20,.45,p)).lerp(cream,smooth(.65,.85,p));
+  stars.forEach((s,i)=>{s.material.opacity=1-smooth(.12,.38,p);});
+  moon.material.opacity=1-smooth(.20,.38,p);moon.visible=p<.45;ring.visible=p<.45;astronaut.visible=p<.29;
+  clouds.forEach(c=>{c.material.opacity=(1-smooth(.42,.57,p))*.75;c.visible=p<.60});
+  buildings.forEach(b=>{b.material.opacity=smooth(.22,.39,p)*(1-smooth(.66,.74,p));b.visible=p>.20&&p<.80});
+  walkers.forEach(({mesh})=>{mesh.material.opacity=smooth(.34,.47,p)*(1-smooth(.66,.73,p));mesh.visible=p>.30&&p<.76});
+  door.material.opacity=smooth(.55,.71,p)*(1-smooth(.81,.9,p));door.visible=p>.52&&p<.93;
+  panels.forEach(x=>{x.material.opacity=smooth(.71,.82,p)*(1-smooth(.91,.96,p));x.visible=p>.68&&p<.98});
+  studioTable.visible=p>.82;lampshade.visible=p>.82;
+  for(const cue of cues){const node=document.getElementById(cue.id);const fade=Math.min(smooth(cue.a,cue.a+.025,p),1-smooth(cue.b-.03,cue.b,p));const opacity=Math.max(0,fade);node.style.opacity=String(opacity);node.style.visibility=opacity<.01?'hidden':'visible';node.style.transform='translate3d(0,'+((1-opacity)*25)+'px,0)';node.style.pointerEvents=opacity>.55?'auto':'none';}
+  document.body.classList.toggle('paper-phase',p>.74);
+  const chap=p<.2?1:p<.39?2:p<.63?3:p<.84?4:5;
+  document.querySelector('#progress .count').textContent=String(chap).padStart(2,'0')+' / 05';
+  document.querySelector('#progress i').style.width=(p*100).toFixed(2)+'%';
+  renderer.render(scene,camera);
+ }
+ desired=getProgress();current=desired;requestAnimationFrame(frame);
+ loader.classList.add('hidden');
+ document.addEventListener('visibilitychange',()=>{running=!document.hidden;if(running)requestAnimationFrame(frame);});
+}
+</script>
+</body></html>
