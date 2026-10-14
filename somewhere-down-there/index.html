@@ -107,7 +107,7 @@ body.paper-phase #progress .bar{background:rgba(16,32,56,.3)}
 <div id="progress"><span class="count">01 / 05</span><span class="bar"><i></i></span></div>
 <div id="scroll-cue" aria-hidden="true">Scroll to wander</div>
 <div id="attribution">A moving illustrated world · Made slowly, on purpose</div>
-<div id="track" id="top" aria-hidden="true"></div>
+<div id="track" aria-hidden="true"></div>
 <main id="fallback">
 <section><h1>Studio Bea Sophia</h1><p>Somewhere, down there.</p><p>An independent creative web studio, building strange, thoughtful little places on the internet.</p></section>
 <section><h2>Millions of little worlds.</h2><p>There are quite a lot of things happening on Earth. Most of them go unnoticed. Everyone has a story.</p></section>
@@ -121,10 +121,9 @@ const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
 const loader=document.getElementById('loading');
 if(reduced){loader.classList.add('hidden');document.body.classList.add('paper-phase');}
 else {
- try {startJourney();}
- catch(err){console.error(err);document.querySelector('#no-webgl').style.display='block';document.querySelector('#fallback').style.display='block';loader.classList.add('hidden');}
+ startJourney().catch(err=>{console.error('3D world unavailable:',err);document.querySelector('#no-webgl').style.display='block';document.querySelector('#fallback').style.display='block';loader.classList.add('hidden');});
 }
-function startJourney(){
+async function startJourney(){
  const canvas=document.getElementById('world'),renderer=new THREE.WebGLRenderer({canvas,antialias:true,alpha:false,powerPreference:'high-performance'});
  renderer.setPixelRatio(Math.min(devicePixelRatio||1,1.7));
  renderer.outputColorSpace=THREE.SRGBColorSpace;
@@ -134,12 +133,39 @@ function startJourney(){
  const camera=new THREE.PerspectiveCamera(42,innerWidth/innerHeight,.1,230);
  camera.position.set(0,2,34);
  const root=new THREE.Group();scene.add(root);
+ // The atlas is cut from the five supplied pencil-and-ink illustrations.
+ // Every sprite has a transparent background and becomes a plane inside the 3D world.
+ let atlasImage=null;
+ try {
+  const data=await fetch('./assets/illustration-atlas.b64').then(r=>{if(!r.ok)throw new Error('atlas missing');return r.text();});
+  atlasImage=new Image();
+  atlasImage.src='data:image/png;base64,'+data.trim();
+  await atlasImage.decode();
+ } catch(error){console.warn('Using procedural illustrations:',error);atlasImage=null;}
+ const atlasMap={
+  astronaut:[8,8,245,267],
+  'cloud-a':[261,8,136,273],'cloud-b':[405,8,252,216],
+  'city-a':[8,289,294,258],'city-b':[310,289,294,201],
+  'city-c':[8,555,294,239],'city-d':[310,555,294,225],
+  'people-a':[612,555,122,255],'people-b':[8,818,122,229],
+  'people-c':[138,818,122,225],'people-d':[268,818,122,289],
+  'people-e':[398,818,122,209],'people-f':[528,818,122,259],
+  'people-g':[658,818,122,244],'people-h':[8,1115,122,239]
+ };
  const ink='#17233b',paper='#f0e9dc',rose='#bd93a2',gold='#dec59d';
  let seed=76;function rand(){seed=(seed*1664525+1013904223)>>>0;return seed/4294967296;}
  function canvasTex(draw,w=512,h=512){
   const c=document.createElement('canvas');c.width=w;c.height=h;
   const ctx=c.getContext('2d');ctx.imageSmoothingEnabled=true;
   draw(ctx,w,h);const t=new THREE.CanvasTexture(c);t.colorSpace=THREE.SRGBColorSpace;t.anisotropy=Math.min(renderer.capabilities.getMaxAnisotropy(),8);return t;
+ }
+ function atlasTex(name,color){
+  if(!atlasImage)return null;
+  const [x,y,w,h]=atlasMap[name];
+  return canvasTex((g)=>{
+    g.drawImage(atlasImage,x,y,w,h,0,0,w,h);
+    if(color){g.globalCompositeOperation='source-in';g.fillStyle=color;g.fillRect(0,0,w,h);g.globalCompositeOperation='source-over';}
+  },w,h);
  }
  function sprite(texture,w,h,x,y,z,opacity=1){
   const m=new THREE.MeshBasicMaterial({map:texture,transparent:true,depthWrite:false,opacity,side:THREE.DoubleSide});
@@ -172,7 +198,7 @@ function startJourney(){
   g.strokeStyle=ink;g.lineWidth=2;g.strokeRect(203,228,44,44);g.fillStyle=rose;g.fillRect(218,245,11,11);
   g.restore();speckle(g,w,h,90);
  },480,500);
- const astronaut=sprite(astroTexture,14.2,14.7,-7,1,4);astronaut.rotation.z=-.10;
+ const astronaut=sprite(atlasTex('astronaut','#ece8e2')||astroTexture,14.2,15.5,-7,1,4);astronaut.rotation.z=-.10;
  const ring=new THREE.Mesh(new THREE.TorusGeometry(5.6,.025,3,220),new THREE.MeshBasicMaterial({color:'#e0c9c6',transparent:true,opacity:.55}));ring.position.set(11,-6,-8);ring.rotation.set(.3,.4,.2);scene.add(ring);
  const moon=new THREE.Mesh(new THREE.SphereGeometry(5.1,48,32),new THREE.MeshStandardMaterial({color:'#b7b9c6',roughness:1,metalness:0}));
  moon.position.set(12,-6,-8);scene.add(moon);
@@ -192,7 +218,7 @@ function startJourney(){
   g.lineTo(500,430);g.lineTo(15,430);g.closePath();g.fill();g.globalAlpha=1;
   g.strokeStyle=ink;g.lineWidth=1.2;g.stroke();for(let i=0;i<70;i++){g.fillStyle=ink;g.globalAlpha=rand()*.28;g.fillRect(rand()*w,170+rand()*200,1,2);}g.globalAlpha=1;
  });
- for(let i=0;i<13;i++){let c=sprite(cloudTex,8+rand()*13,4+rand()*6,(rand()-.5)*42,-13-rand()*15,rand()*20-11,.55+rand()*.35);c.rotation.z=(rand()-.5)*.24;clouds.push(c);}
+ for(let i=0;i<13;i++){let c=sprite(atlasTex(i%2?'cloud-a':'cloud-b','#c1a0ae')||cloudTex,8+rand()*13,4+rand()*6,(rand()-.5)*42,-13-rand()*15,rand()*20-11,.55+rand()*.35);c.rotation.z=(rand()-.5)*.24;clouds.push(c);}
  // Individual buildings are transparent ink illustrations on planes scattered through real 3D depth.
  const buildings=[],windows=[];
  function buildingTex(index){
@@ -214,7 +240,8 @@ function startJourney(){
  for(let i=0;i<21;i++){
   const x=(i-10)*3.2+(rand()-.5)*2,depth=-13+(i%5)*5;
   const h=12+rand()*10;
-  const b=sprite(buildingTex(i),h*.81,h,x,-46+h*.1,depth);
+  const assetName=['city-a','city-b','city-c','city-d'][i%4];
+  const b=sprite(atlasTex(assetName,i%4===1?'#c3b8b6':'#e7e4e2')||buildingTex(i),h*.98,h,x,-46+h*.1,depth);
   buildings.push(b);
  }
  const walkers=[];
@@ -237,11 +264,11 @@ function startJourney(){
     for(let i=0;i<55;i++){g.globalAlpha=rand()*.55;g.fillStyle=ink;g.fillRect(80+rand()*93,192+rand()*135,rand()*2+1,rand()*2+1);}g.globalAlpha=1;
   },260,480);
  }
- const peopleTex=Array.from({length:6},(_,i)=>figureTex(i));
+ const peopleTex=Array.from({length:8},(_,i)=>atlasTex('people-'+String.fromCharCode(97+i),i%3===0?'#cfbfc4':'#f0e8e0')||figureTex(i));
  for(let i=0;i<23;i++){
   const x=(rand()-.5)*35,z=-4+rand()*17;
   const scale=.6+rand()*.7;
-  const person=sprite(peopleTex[i%6],3.4*scale,6.5*scale,x,-61.6-rand()*3,z,.95);
+  const person=sprite(peopleTex[i%peopleTex.length],3.4*scale,6.5*scale,x,-61.6-rand()*3,z,.95);
   walkers.push({mesh:person,phase:rand()*6.28,baseX:x,speed:.07+rand()*.19});
  }
  const storefront=canvasTex((g,w,h)=>{
@@ -255,6 +282,7 @@ function startJourney(){
   speckle(g,w,h,170);
  });
  const door=sprite(storefront,20,20,0,-91,-12);
+ const galleryVisitor=atlasImage?sprite(atlasTex('people-d','#1b2944'),5.5,13,11,-102,-8,.76):null;
  const galleryPaper=canvasTex((g,w,h)=>{
   g.fillStyle=paper;g.fillRect(50,45,415,440);
   g.strokeStyle=ink;g.lineWidth=3;g.strokeRect(50,45,415,440);
@@ -319,7 +347,7 @@ function startJourney(){
    mesh.rotation.z=Math.sin(clock*.8+phase)*.013;
   });
   let t=smooth(.27,.64,p);
-  scene.background.copy(navy).lerp(deepBlue,smooth(.20,.45,p)).lerp(cream,smooth(.65,.85,p));
+  scene.background.copy(navy).lerp(deepBlue,smooth(.20,.45,p)).lerp(cream,smooth(.60,.75,p));
   stars.forEach((s,i)=>{s.material.opacity=1-smooth(.12,.38,p);});
   moon.material.opacity=1-smooth(.20,.38,p);moon.visible=p<.45;ring.visible=p<.45;astronaut.visible=p<.29;
   clouds.forEach(c=>{c.material.opacity=(1-smooth(.42,.57,p))*.75;c.visible=p<.60});
@@ -327,9 +355,10 @@ function startJourney(){
   walkers.forEach(({mesh})=>{mesh.material.opacity=smooth(.34,.47,p)*(1-smooth(.66,.73,p));mesh.visible=p>.30&&p<.76});
   door.material.opacity=smooth(.55,.71,p)*(1-smooth(.81,.9,p));door.visible=p>.52&&p<.93;
   panels.forEach(x=>{x.material.opacity=smooth(.71,.82,p)*(1-smooth(.91,.96,p));x.visible=p>.68&&p<.98});
+  if(galleryVisitor){galleryVisitor.visible=p>.72&&p<.96;galleryVisitor.material.opacity=smooth(.73,.84,p)*(1-smooth(.90,.96,p));}
   studioTable.visible=p>.82;lampshade.visible=p>.82;
   for(const cue of cues){const node=document.getElementById(cue.id);const fade=Math.min(smooth(cue.a,cue.a+.025,p),1-smooth(cue.b-.03,cue.b,p));const opacity=Math.max(0,fade);node.style.opacity=String(opacity);node.style.visibility=opacity<.01?'hidden':'visible';node.style.transform='translate3d(0,'+((1-opacity)*25)+'px,0)';node.style.pointerEvents=opacity>.55?'auto':'none';}
-  document.body.classList.toggle('paper-phase',p>.74);
+  document.body.classList.toggle('paper-phase',p>.72);
   const chap=p<.2?1:p<.39?2:p<.63?3:p<.84?4:5;
   document.querySelector('#progress .count').textContent=String(chap).padStart(2,'0')+' / 05';
   document.querySelector('#progress i').style.width=(p*100).toFixed(2)+'%';
